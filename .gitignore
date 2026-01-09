@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Data (DO NOT COMMIT)
+data/raw/
+data/processed/
+
+# Mac / editor
+.DS_Store
+.vscode/
+
+# Outputs
+figures/
+reports/*.pdf
+

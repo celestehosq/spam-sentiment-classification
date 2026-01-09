@@ -92,6 +92,14 @@ def main():
          X_train_combo, X_test_combo),
         ("MLP_tfidf_sent", MLPClassifier(hidden_layer_sizes=(128,), max_iter=8, random_state=args.seed),
          X_train_combo, X_test_combo),
+
+        ("NB_sent_only", MultinomialNB(), X_train_sent, X_test_sent),
+        ("RF_sent_only", RandomForestClassifier(n_estimators=200, random_state=args.seed, n_jobs=-1),
+         X_train_sent, X_test_sent),
+        ("MLP_sent_only", MLPClassifier(hidden_layer_sizes=(128,), max_iter=50, random_state=args.seed),
+         X_train_sent, X_test_sent),
+
+
     ]
 
     results = []

@@ -8,7 +8,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_recall_fscore_support, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
@@ -37,15 +37,46 @@ def vader_features(texts: pd.Series) -> csr_matrix:
     return csr_matrix(rows)
 
 
+
 def evaluate(name: str, model, X_test, y_test) -> dict:
     preds = model.predict(X_test)
-    print(f"\n===== {name} =====")
-    print(classification_report(y_test, preds, digits=4))
+
+    # Confusion matrix with fixed label order
     cm = confusion_matrix(y_test, preds, labels=["ham", "spam"])
     tn, fp, fn, tp = cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1]
+
+    # Metrics per class in the same label order
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        y_test, preds, labels=["ham", "spam"], zero_division=0
+    )
+    prec_ham, prec_spam = precision[0], precision[1]
+    rec_ham, rec_spam = recall[0], recall[1]
+    f1_ham, f1_spam = f1[0], f1[1]
+
+    acc = accuracy_score(y_test, preds)
+    macro_f1 = (f1_ham + f1_spam) / 2.0
+
+    # Keep console output (nice for you while running)
+    print(f"\n===== {name} =====")
+    print(f"accuracy={acc:.4f} | spam: P={prec_spam:.4f} R={rec_spam:.4f} F1={f1_spam:.4f} | ham: P={prec_ham:.4f} R={rec_ham:.4f} F1={f1_ham:.4f}")
     print("Confusion matrix [ham, spam]:")
     print(cm)
-    return {"model": name, "tn": tn, "fp": fp, "fn": fn, "tp": tp}
+
+    return {
+        "model": name,
+        "accuracy": acc,
+        "precision_spam": prec_spam,
+        "recall_spam": rec_spam,
+        "f1_spam": f1_spam,
+        "precision_ham": prec_ham,
+        "recall_ham": rec_ham,
+        "f1_ham": f1_ham,
+        "macro_f1": macro_f1,
+        "tn": tn,
+        "fp": fp,
+        "fn": fn,
+        "tp": tp,
+    }
 
 
 def main():

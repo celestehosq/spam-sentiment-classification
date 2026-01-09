@@ -1,0 +1,7 @@
+model,tn,fp,fn,tp
+NB_tfidf,3240,69,0,3435
+RF_tfidf,3307,2,0,3435
+MLP_tfidf,3305,4,0,3435
+NB_tfidf_sent,3243,66,0,3435
+RF_tfidf_sent,3307,2,0,3435
+MLP_tfidf_sent,3305,4,0,3435
